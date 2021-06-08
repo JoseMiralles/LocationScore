@@ -53,8 +53,10 @@ const getWorkforceWagesArray = () => {
     return res;
 };
 
-let filtered = getWorkforceWagesArray();
-filtered.forEach(x => console.log(x));
+
+const getTaxRateArray = () => {
+    
+};
 
 
 module.exports = {
