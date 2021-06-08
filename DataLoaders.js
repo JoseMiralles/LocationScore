@@ -1,10 +1,11 @@
 const xml2js = require("xml2js");
 const fs = require("fs");
+const xlsx = require("node-xlsx").default;
 
 
 /**
  * Parses the wages xml file to get the service industry average weekly wages for each county code.
- * @returns An array of objects that look like: { countyCode: '141', averageWeeklyWage: '807' }
+ * @returns An array of objects that look like: { countyCode: '141', averageWeeklyWage: 807, wageCoefficient: 65.62 }
  */
 const getWorkforceWagesArray = () => {
     const parser = new xml2js.Parser({ attrkey: "ATTR" });
@@ -20,10 +21,11 @@ const getWorkforceWagesArray = () => {
             result["state-county-wage-data"].record.forEach(x => {
 
                 // Check if this datapoint is for a service industry entry.
-                if (x.Industry[0].startsWith("102 ")) {
+                if (x.Industry[0].startsWith("102 ") && !x["Area"][0].includes("Unknown Or Undefined")) {
 
                     // Create a new datapoint with the relevant data.
                     const dataPoint = {
+                        area: x.Area[0],
                         countyCode: x.Cnty[0],
                         averageWeeklyWage: parseInt(x["Annual_Average_Weekly_Wage"][0].replace("_", ""))
                     };
@@ -55,10 +57,14 @@ const getWorkforceWagesArray = () => {
 
 
 const getTaxRateArray = () => {
-    
+    const data = xlsx.parse("./data/County_Tax_Rate.xlsx")[0].data;
+    const lll = 0;
 };
 
+// getTaxRateArray();
+getWorkforceWagesArray().forEach(x => console.log(x));
 
 module.exports = {
-    getWorkforceWagesArray
+    getWorkforceWagesArray,
+    getTaxRateArray
 };

@@ -31,6 +31,19 @@ Example wage datapoint:
 
 - Location with low tax rates:  County_Tax_Rate.xls
 
+```
+[
+    [
+        0:'0500000US01005'
+        1:'Alabama'
+        2:'Barbour County, Alabama'
+        3:5.045
+    ],
+    [
+    ...
+]
+```
+
 - Location with high median income: Median_Income_County.json
 
 - Location with high unemployment:  Unemployment_By_County.xls
