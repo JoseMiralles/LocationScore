@@ -5,9 +5,9 @@ const xlsx = require("node-xlsx").default;
 
 /**
  * Parses the wages xml file to get the service industry average weekly wages for each county code.
- * @returns An array of objects that look like: { countyCode: '141', averageWeeklyWage: 807, wageCoefficient: 65.62 }
+ * @returns A dictionary that look like: '01141': { countyCode: '01141', averageWeeklyWage: 807, wageCoefficient: 65.62 }
  */
-const getWorkforceWagesArray = () => {
+const getWorkforceWages = () => {
     const parser = new xml2js.Parser({ attrkey: "ATTR" });
     let xml_string = fs.readFileSync("./data/US_St_Cn_Table_Workforce_Wages.xml", "utf8");
 
@@ -55,7 +55,7 @@ const getWorkforceWagesArray = () => {
 };
 
 
-const getTaxRateArray = () => {
+const getTaxRates = () => {
     const data = xlsx.parse("./data/County_Tax_Rate.xlsx")[0].data;
 
     const res = {};
