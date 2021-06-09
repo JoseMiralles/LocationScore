@@ -91,8 +91,8 @@ const getTaxRates = () => {
 
 
 
-// const wages = getWorkforceWagesArray();
-const res = getTaxRateArray();
+// const wages = getWorkforceWages();
+const res = getTaxRates();
 Object.values(res).forEach(x => console.log(x));
 
 module.exports = {
