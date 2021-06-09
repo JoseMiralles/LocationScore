@@ -129,7 +129,8 @@ const getMedianIncomeNumbers = () => {
         const el = data[i];
         const dataPoint = {
             areaCode: el[2] + el[3],
-            medianIncome: parseInt(el[1])
+            medianIncome: parseInt(el[1]),
+            county: el[0]
         };
         if (dataPoint.medianIncome < lowestIncome) lowestIncome = dataPoint.medianIncome;
         if (dataPoint.medianIncome > highestIncome) highestIncome = dataPoint.medianIncome;
@@ -147,11 +148,55 @@ const getMedianIncomeNumbers = () => {
     return res;
 };
 
+const generateScore = (...coefficients) => {
+    let res = 0;
+    coefficients.forEach(c => res += c);
+    return res / coefficients.length;
+};
+
+const generateOutputArray = () => {
+
+    const workForceWages = getWorkforceWages();
+    const taxRates = getTaxRates();
+    const unemploymentRates = getUnemploymentRates();
+    const medianIncomes = getMedianIncomeNumbers();
+
+    const merged = [];
+    Object.keys(workForceWages).forEach(k => {
+        if ( workForceWages[k]
+            && workForceWages[k]
+            && taxRates[k]
+            && unemploymentRates[k]
+            && medianIncomes[k] ){
+
+            merged[k] = {
+                county: medianIncomes[k].county, 
+                areaCode: workForceWages[k].areaCode,
+                score: generateScore(
+                    workForceWages[k].wageCoefficient,
+                    taxRates[k].taxRateCoefficient,
+                    unemploymentRates[k].unemploymentRateCoefficient,
+                    medianIncomes[k].medianIncomeCoefficient
+                ),
+                averageWeeklyWage: workForceWages[k].averageWeeklyWage,
+                taxRate: taxRates[k].localTaxRate,
+                unemploymentRate: unemploymentRates[k].unemploymentRate,
+                medianIncome: medianIncomes[k].medianIncome
+            };
+        }
+    });
+
+    return merged;
+};
+
 // const res = getWorkforceWages();
 // const res = getTaxRates();
 // const res = getUnemploymentRates();
-const res = getMedianIncomeNumbers();
-Object.values(res).forEach(x => console.log(x));
+// const res = getMedianIncomeNumbers();
+// Object.values(res).forEach(x => console.log(x));
+
+const res = generateOutputArray();
+res.forEach(x => console.log(x));
 
 module.exports = {
     getWorkforceWages,
