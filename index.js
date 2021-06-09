@@ -1,3 +1,3 @@
-const { getWorkforceWagesArray } = require("./DataLoaders");
+const { getWorkforceWages } = require("./DataLoaders");
 
-console.log(getWorkforceWagesArray[0]);
+// console.log(getWorkforceWages[0]);
