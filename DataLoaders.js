@@ -163,26 +163,24 @@ const generateOutputArray = () => {
 
     const merged = [];
     Object.keys(workForceWages).forEach(k => {
-        if ( workForceWages[k]
-            && workForceWages[k]
-            && taxRates[k]
+        if ( taxRates[k]
             && unemploymentRates[k]
             && medianIncomes[k] ){
 
-            merged[k] = {
+            merged.push({
                 county: medianIncomes[k].county, 
-                areaCode: workForceWages[k].areaCode,
+                area_code: workForceWages[k].areaCode,
                 score: generateScore(
                     workForceWages[k].wageCoefficient,
                     taxRates[k].taxRateCoefficient,
                     unemploymentRates[k].unemploymentRateCoefficient,
                     medianIncomes[k].medianIncomeCoefficient
                 ),
-                averageWeeklyWage: workForceWages[k].averageWeeklyWage,
-                taxRate: taxRates[k].localTaxRate,
-                unemploymentRate: unemploymentRates[k].unemploymentRate,
-                medianIncome: medianIncomes[k].medianIncome
-            };
+                average_weekly_wage: workForceWages[k].averageWeeklyWage,
+                tax_rate: taxRates[k].localTaxRate,
+                unemployment_rate: unemploymentRates[k].unemploymentRate,
+                median_income: medianIncomes[k].medianIncome
+            });
         }
     });
 
