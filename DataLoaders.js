@@ -26,7 +26,7 @@ const getWorkforceWagesArray = () => {
                     // Create a new datapoint with the relevant data.
                     const dataPoint = {
                         area: x.Area[0],
-                        countyCode: x.Cnty[0],
+                        areaCode: x.Area_Code[0],
                         averageWeeklyWage: parseInt(x["Annual_Average_Weekly_Wage"][0].replace("_", ""))
                     };
 
@@ -34,7 +34,7 @@ const getWorkforceWagesArray = () => {
                     if (highestWage < dataPoint.averageWeeklyWage) highestWage = dataPoint.averageWeeklyWage;
                     if (lowestWage > dataPoint.averageWeeklyWage) lowestWage = dataPoint.averageWeeklyWage;
 
-                    res[dataPoint.countyCode] = dataPoint;
+                    res[dataPoint.areaCode] = dataPoint;
                 };
             });
         } else {
@@ -43,14 +43,6 @@ const getWorkforceWagesArray = () => {
     });
 
     const difference = highestWage - lowestWage;
-
-    // Iterate trough the list, and assign a coefficient to each datapoint.
-    // res.forEach((x, i) => {
-    //     let coefficient = 0.0
-    //     coefficient = x.averageWeeklyWage - lowestWage;
-    //     coefficient = 100 - (coefficient / difference * 100);
-    //     res[i].wageCoefficient = coefficient;
-    // });
 
     Object.keys(res).forEach(x => {
         let coefficient = 0.0
@@ -65,12 +57,41 @@ const getWorkforceWagesArray = () => {
 
 const getTaxRateArray = () => {
     const data = xlsx.parse("./data/County_Tax_Rate.xlsx")[0].data;
-    const ll = 0;
+
+    const res = {};
+    let lowestRate = Number.MAX_VALUE;
+    let highestRate = Number.MIN_VALUE;
+
+    for (let i = 1; i < data.length; i++) {
+        const el = data[i];
+        if (el[3] !== "None") {
+            //Geo_id example: 0500000US01001
+            const dataPoint = {
+                areaCode: el[0].slice(el[0].lastIndexOf("US") + 2),
+                localTaxRate: el[3]
+            };
+            res[dataPoint.areaCode] = dataPoint;
+
+            if (dataPoint.localTaxRate < lowestRate) lowestRate = dataPoint.localTaxRate;
+            if (dataPoint.localTaxRate > highestRate) highestRate = dataPoint.localTaxRate;
+        }
+    }
+
+    // Calculate and assign coefficients based on lowest and highest rates.
+    const difference = highestRate - lowestRate;
+    Object.keys(res).forEach(k => {
+        let coefficient = 0.0
+        coefficient = res[k].localTaxRate - lowestRate;
+        coefficient = 100 - (coefficient / difference * 100);
+        res[k].taxRateCoefficient = coefficient;
+    });
+
+    return res;
 };
 
-getTaxRateArray();
 // const wages = getWorkforceWagesArray();
-// Object.values(wages).forEach(x => console.log(x));
+const res = getTaxRateArray();
+Object.values(res).forEach(x => console.log(x));
 
 module.exports = {
     getWorkforceWagesArray,
