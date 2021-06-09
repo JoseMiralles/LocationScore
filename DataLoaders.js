@@ -65,7 +65,7 @@ const getWorkforceWagesArray = () => {
 
 const getTaxRateArray = () => {
     const data = xlsx.parse("./data/County_Tax_Rate.xlsx")[0].data;
-    const lll = 0;
+    const ll = 0;
 };
 
 getTaxRateArray();
