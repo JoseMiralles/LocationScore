@@ -54,7 +54,6 @@ const getWorkforceWages = () => {
     return res;
 };
 
-
 const getTaxRates = () => {
     const data = xlsx.parse("./data/County_Tax_Rate.xlsx")[0].data;
 
@@ -68,7 +67,7 @@ const getTaxRates = () => {
             //Geo_id example: 0500000US01001
             const dataPoint = {
                 areaCode: el[0].slice(el[0].lastIndexOf("US") + 2),
-                localTaxRate: el[3]
+                localTaxRate: parseFloat(el[3])
             };
             res[dataPoint.areaCode] = dataPoint;
 
@@ -100,7 +99,7 @@ const getUnemploymentRates = () => {
         const el = data[i];
         const dataPoint = {
             areaCode: el[1] + el[2],
-            unemploymentRate: el[8]
+            unemploymentRate: parseFloat(el[8])
         };
         if (dataPoint.unemploymentRate < lowestRate) lowestRate = dataPoint.unemploymentRate;
         if (dataPoint.unemploymentRate > highestRate) highestRate = dataPoint.unemploymentRate;
@@ -119,9 +118,39 @@ const getUnemploymentRates = () => {
     return res;
 };
 
+const getMedianIncomeNumbers = () => {
+
+    const data = JSON.parse(fs.readFileSync("./data/Median_Income_County.json", "utf8"));
+    const res = {};
+    let lowestIncome = Number.MAX_VALUE;
+    let highestIncome = Number.MIN_VALUE;
+    
+    for (let i = 1; i < data.length; i++){
+        const el = data[i];
+        const dataPoint = {
+            areaCode: el[2] + el[3],
+            medianIncome: parseInt(el[1])
+        };
+        if (dataPoint.medianIncome < lowestIncome) lowestIncome = dataPoint.medianIncome;
+        if (dataPoint.medianIncome > highestIncome) highestIncome = dataPoint.medianIncome;
+        res[dataPoint.areaCode] = dataPoint;
+    }
+
+    const difference = highestIncome - lowestIncome;
+    Object.keys(res).forEach(k => {
+        let coefficient = 0.0;
+        coefficient = res[k].medianIncome - lowestIncome;
+        coefficient = (coefficient / difference * 100);
+        res[k].medianIncomeCoefficient = coefficient;
+    });
+
+    return res;
+};
+
 // const res = getWorkforceWages();
 // const res = getTaxRates();
-const res = getUnemploymentRates();
+// const res = getUnemploymentRates();
+const res = getMedianIncomeNumbers();
 Object.values(res).forEach(x => console.log(x));
 
 module.exports = {
