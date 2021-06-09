@@ -11,7 +11,7 @@ const getWorkforceWagesArray = () => {
     const parser = new xml2js.Parser({ attrkey: "ATTR" });
     let xml_string = fs.readFileSync("./data/US_St_Cn_Table_Workforce_Wages.xml", "utf8");
 
-    const res = [];
+    const res = {};
     let highestWage = Number.MIN_VALUE;
     let lowestWage = Number.MAX_VALUE;
 
@@ -34,7 +34,7 @@ const getWorkforceWagesArray = () => {
                     if (highestWage < dataPoint.averageWeeklyWage) highestWage = dataPoint.averageWeeklyWage;
                     if (lowestWage > dataPoint.averageWeeklyWage) lowestWage = dataPoint.averageWeeklyWage;
 
-                    res.push(dataPoint);
+                    res[dataPoint.countyCode] = dataPoint;
                 };
             });
         } else {
@@ -45,11 +45,18 @@ const getWorkforceWagesArray = () => {
     const difference = highestWage - lowestWage;
 
     // Iterate trough the list, and assign a coefficient to each datapoint.
-    res.forEach((x, i) => {
+    // res.forEach((x, i) => {
+    //     let coefficient = 0.0
+    //     coefficient = x.averageWeeklyWage - lowestWage;
+    //     coefficient = 100 - (coefficient / difference * 100);
+    //     res[i].wageCoefficient = coefficient;
+    // });
+
+    Object.keys(res).forEach(x => {
         let coefficient = 0.0
-        coefficient = x.averageWeeklyWage - lowestWage;
+        coefficient = res[x].averageWeeklyWage - lowestWage;
         coefficient = 100 - (coefficient / difference * 100);
-        res[i].wageCoefficient = coefficient;
+        res[x].wageCoefficient = coefficient;
     });
 
     return res;
@@ -61,8 +68,9 @@ const getTaxRateArray = () => {
     const lll = 0;
 };
 
-// getTaxRateArray();
-getWorkforceWagesArray().forEach(x => console.log(x));
+getTaxRateArray();
+// const wages = getWorkforceWagesArray();
+// Object.values(wages).forEach(x => console.log(x));
 
 module.exports = {
     getWorkforceWagesArray,
