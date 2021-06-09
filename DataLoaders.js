@@ -82,17 +82,46 @@ const getTaxRates = () => {
     Object.keys(res).forEach(k => {
         let coefficient = 0.0
         coefficient = res[k].localTaxRate - lowestRate;
-        coefficient = 100 - (coefficient / difference * 100);
+        coefficient = (coefficient / difference * 100);
         res[k].taxRateCoefficient = coefficient;
     });
 
     return res;
 };
 
+const getUnemploymentRates = () => {
 
+    const data = xlsx.parse("./data/Unemployment_By_County.xlsx")[0].data;
+    const res = {};
+    let lowestRate = Number.MAX_VALUE;
+    let highestRate = Number.MIN_VALUE;
 
-// const wages = getWorkforceWages();
-const res = getTaxRates();
+    for (let i = 1; i < data.length; i++) {
+        const el = data[i];
+        const dataPoint = {
+            areaCode: el[1] + el[2],
+            unemploymentRate: el[8]
+        };
+        if (dataPoint.unemploymentRate < lowestRate) lowestRate = dataPoint.unemploymentRate;
+        if (dataPoint.unemploymentRate > highestRate) highestRate = dataPoint.unemploymentRate;
+        res[dataPoint.areaCode] = dataPoint;
+    }
+
+    // Calculate and assign coefficients based on lowest and highest rates.
+    const difference = highestRate - lowestRate;
+    Object.keys(res).forEach(k => {
+        let coefficient = 0.0
+        coefficient = res[k].unemploymentRate - lowestRate;
+        coefficient = (coefficient / difference * 100);
+        res[k].unemploymentRateCoefficient = coefficient;
+    });
+
+    return res;
+};
+
+// const res = getWorkforceWages();
+// const res = getTaxRates();
+const res = getUnemploymentRates();
 Object.values(res).forEach(x => console.log(x));
 
 module.exports = {
