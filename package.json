@@ -18,6 +18,7 @@
   "homepage": "https://github.com/JoseMiralles/LocationScore#readme",
   "dependencies": {
     "node-xlsx": "^0.16.1",
+    "xlsx": "^0.16.9",
     "xml2js": "^0.4.23"
   }
 }

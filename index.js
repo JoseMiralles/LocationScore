@@ -1,3 +1,5 @@
-const { getWorkforceWages } = require("./DataLoaders");
+const { generateOutputArray } = require("./DataLoaders");
+const {saveAsExcelFile} = require("./Writers");
 
-// console.log(getWorkforceWages[0]);
+const res = generateOutputArray();
+saveAsExcelFile(res);

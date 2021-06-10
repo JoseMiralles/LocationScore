@@ -81,7 +81,7 @@ const getTaxRates = () => {
     Object.keys(res).forEach(k => {
         let coefficient = 0.0
         coefficient = res[k].localTaxRate - lowestRate;
-        coefficient = (coefficient / difference * 100);
+        coefficient = 100 - (coefficient / difference * 100);
         res[k].taxRateCoefficient = coefficient;
     });
 
@@ -124,17 +124,19 @@ const getMedianIncomeNumbers = () => {
     const res = {};
     let lowestIncome = Number.MAX_VALUE;
     let highestIncome = Number.MIN_VALUE;
-    
-    for (let i = 1; i < data.length; i++){
+
+    for (let i = 1; i < data.length; i++) {
         const el = data[i];
-        const dataPoint = {
-            areaCode: el[2] + el[3],
-            medianIncome: parseInt(el[1]),
-            county: el[0]
-        };
-        if (dataPoint.medianIncome < lowestIncome) lowestIncome = dataPoint.medianIncome;
-        if (dataPoint.medianIncome > highestIncome) highestIncome = dataPoint.medianIncome;
-        res[dataPoint.areaCode] = dataPoint;
+        if (el[1]) {
+            const dataPoint = {
+                areaCode: el[2] + el[3],
+                medianIncome: parseInt(el[1]),
+                county: el[0]
+            };
+            if (dataPoint.medianIncome < lowestIncome) lowestIncome = dataPoint.medianIncome;
+            if (dataPoint.medianIncome > highestIncome) highestIncome = dataPoint.medianIncome;
+            res[dataPoint.areaCode] = dataPoint;
+        }
     }
 
     const difference = highestIncome - lowestIncome;
@@ -163,12 +165,12 @@ const generateOutputArray = () => {
 
     const merged = [];
     Object.keys(workForceWages).forEach(k => {
-        if ( taxRates[k]
+        if (taxRates[k]
             && unemploymentRates[k]
-            && medianIncomes[k] ){
+            && medianIncomes[k]) {
 
             merged.push({
-                county: medianIncomes[k].county, 
+                county: medianIncomes[k].county,
                 area_code: workForceWages[k].areaCode,
                 score: generateScore(
                     workForceWages[k].wageCoefficient,
@@ -195,10 +197,9 @@ const generateOutputArray = () => {
 // const res = getMedianIncomeNumbers();
 // Object.values(res).forEach(x => console.log(x));
 
-const res = generateOutputArray();
-res.forEach(x => console.log(x));
+// const res = generateOutputArray();
+// res.forEach(x => console.log(x));
 
 module.exports = {
-    getWorkforceWages,
-    getTaxRates
+    generateOutputArray
 };
