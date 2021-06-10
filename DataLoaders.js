@@ -21,7 +21,9 @@ const getWorkforceWages = () => {
             result["state-county-wage-data"].record.forEach(x => {
 
                 // Check if this datapoint is for a service industry entry.
-                if (x.Industry[0].startsWith("102 ") && !x["Area"][0].includes("Unknown Or Undefined")) {
+                if (x.Industry[0].startsWith("102 ")
+                && !x["Area"][0].includes("Unknown Or Undefined")
+                && parseInt(x["Annual_Average_Weekly_Wage"][0]) > 0) {
 
                     // Create a new datapoint with the relevant data.
                     const dataPoint = {
@@ -63,7 +65,10 @@ const getTaxRates = () => {
 
     for (let i = 1; i < data.length; i++) {
         const el = data[i];
-        if (el[3] !== "None") {
+
+        // If the tax rate exists, and it is bigger than 0.
+        if (el[3] !== "None"
+        && parseFloat(el[3]) > 0) {
             //Geo_id example: 0500000US01001
             const dataPoint = {
                 areaCode: el[0].slice(el[0].lastIndexOf("US") + 2),
