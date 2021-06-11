@@ -1,5 +1,6 @@
 const { generateOutputArray } = require("./DataLoaders");
-const {saveAsExcelFile} = require("./Writers");
+const {saveAsExcelFile, saveAsSQLiteDatabase} = require("./Writers");
 
-const res = generateOutputArray();
-saveAsExcelFile(res);
+// const res = generateOutputArray();
+// saveAsExcelFile(res);
+// saveAsSQLiteDatabase(res);

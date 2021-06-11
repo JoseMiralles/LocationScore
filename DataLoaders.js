@@ -5,7 +5,8 @@ const xlsx = require("node-xlsx").default;
 
 /**
  * Parses the wages xml file to get the service industry average weekly wages for each county code.
- * @returns A dictionary that look like: '01141': { countyCode: '01141', averageWeeklyWage: 807, wageCoefficient: 65.62 }
+ * @returns A dictionary like object that look like:
+ * {'01141': { areaCode: '01141', averageWeeklyWage: 807, wageCoefficient: 65.62 }, ...}
  */
 const getWorkforceWages = () => {
     const parser = new xml2js.Parser({ attrkey: "ATTR" });
@@ -163,13 +164,18 @@ const generateScore = (...coefficients) => {
 
 const generateOutputArray = () => {
 
+    // Generate dictionaries using datasates.
     const workForceWages = getWorkforceWages();
     const taxRates = getTaxRates();
     const unemploymentRates = getUnemploymentRates();
     const medianIncomes = getMedianIncomeNumbers();
 
+    // Merge all of these dictionaries into a single array,
+    // and assign a score to each county.
     const merged = [];
     Object.keys(workForceWages).forEach(k => {
+
+        // Make sure that each county has all metrics before adding it.
         if (taxRates[k]
             && unemploymentRates[k]
             && medianIncomes[k]) {
@@ -191,6 +197,7 @@ const generateOutputArray = () => {
         }
     });
 
+    // Sort the array by score, in descending order.
     merged.sort((a, b) => a.score > b.score ? -1 : 1);
 
     return merged;
@@ -202,9 +209,17 @@ const generateOutputArray = () => {
 // const res = getMedianIncomeNumbers();
 // Object.values(res).forEach(x => console.log(x));
 
-// const res = generateOutputArray();
-// res.forEach(x => console.log(x));
+const res = generateOutputArray();
+res.forEach(x => console.log(x));
 
 module.exports = {
     generateOutputArray
 };
+
+/**
+ * {
+ *  '01141': { areaCode: '01141', averageWeeklyWage: 807, wageCoefficient: 65.62 },
+ *  '06025': {...},
+ *  ...
+ * }
+*/
