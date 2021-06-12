@@ -203,7 +203,7 @@ const generateScore = (...coefficients: number[]): number => {
     return res / coefficients.length;
 };
 
-interface IFinalDataPoint {
+export interface IFinalDataPoint {
     county: number,
     area_code: string,
     score: number,
