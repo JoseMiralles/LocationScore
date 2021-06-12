@@ -213,7 +213,7 @@ export interface IFinalDataPoint {
     median_income: number
 }
 
-export const generateOutputArray = () => {
+export const generateOutputArray = (): IFinalDataPoint[] => {
 
     // Generate dictionaries using datasates.
     const workForceWages = getWorkforceWages();
