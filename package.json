@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "tsc && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +22,8 @@
     "sqlite3": "^5.0.2",
     "xlsx": "^0.16.9",
     "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "typescript": "^4.3.2"
   }
 }
